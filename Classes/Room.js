@@ -1,4 +1,5 @@
 const config = require("../config/config")
+const newDominantSpeaker = require("../utilities/newDominantSpeaker")
 
 class Room {
     constructor(roomName, workerToUse){
@@ -14,12 +15,16 @@ class Room {
     addClient(client){
         this.clients.push(client)
     }
-    createRouter() {
+    createRouter(io) {
         return new Promise(async(resolve, reject) => {
             this.router = await this.worker.createRouter({
             mediaCodecs: config.routerMediaCodecs
         })
-        resolve()
+        this.activeSpeakerObserver = await this.router.createActiveSpeakerObserver({
+            interval: 300
+        })      
+        this.activeSpeakerObserver.on('dominantspeaker', ds => newDominantSpeaker(ds, this, io))            
+             resolve()
     })
 }
 
