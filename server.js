@@ -126,6 +126,31 @@ io.on('connect', socket => {
         }
     })
 
+    socket.on('consumeMedia', async ({rtpCapabilities, pid, kind}, ackCb) => {
+        //will run twice for every peer to be consumed. one for video, and the second one for audio
+        console.log("kind:", kind, "pid:", pid)
+
+        try {
+            if(!client.room.router.canConsume({producerId:pid, rtpCapabilities})){
+                ackCb("cannotConsume")
+            } else {
+                //we can consume this media
+                const downstreamTransport = client.downstreamTransports.find(t => {
+                    if(kind === "audio"){
+                        return t.associatedAudioPid === pid
+                    } else if (kind === "video"){
+                        return t.associatedVideoPid === pid
+                    }
+                })
+                //create the consumer with the transport
+                const newConsumer = await downstreamTransport.transport.consume({})
+            }
+        } catch (error) {
+            console.log("error consuming media", error)
+            ackCb("consumeFailed")
+        }
+    })
+
     })
 
 //joinRoom event curly brace and bracket
