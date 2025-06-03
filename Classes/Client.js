@@ -45,6 +45,17 @@ class Client {
     if(type === "producer"){
         //set the new transport to the client's upstream transport
         this.upstreamTransport = transport
+
+        setInterval(async () => {
+        const stats = await this.upstreamTransport.getStats()
+        for (const report of stats.values()){
+            console.log(report.type)
+            if(report.type === "webrtc-transport"){
+                console.log(report.bytesReceived, `-`, report.rtpBytesReceived)
+                // console.log(report)
+            }
+        }
+    }, 1000)
     }else if (type === "consumer"){
         this.downstreamTransports.push(transport)
     }

@@ -1,4 +1,4 @@
-const newDominantSpeaker = (ds, room, io) => {
+function newDominantSpeaker (ds, room, io) {
     console.log("=======New Dominant Speaker=======", ds.producer.id)
     // console.log(ds)
 
