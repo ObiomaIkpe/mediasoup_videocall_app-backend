@@ -52,19 +52,41 @@ io.on('connect', socket => {
         //add this socket to the socket room
         socket.join(client.room.roomName)
 
+        //creating audio pids
+        //fetch the first 5 active speaker pidss in active speaker list
+        const audioPidsToCreate = client.room.activeSpeakerList.slice(0,5)
+        const videoPidsToCreate = audioPidsToCreate.map(aid => {
+            const producingClient = client.room.clients.find(c => c?.producer?.audio?.id === aid)
+            return producingClient?.producer?.video?.id
+        })
+
+        const associatedUserNames = audioPidsToCreate.map(aid => {
+            const producingClient = client.room.clients.find(c => c?.producer?.audio?.id === aid)
+            return producingClient?.userName
+        })
+
         ackCb({
             routerRtpCapablities: client.room.router.rtpCapabilities,
-            newRoom
+            newRoom,
+            audioPidsToCreate,
+            videoPidsToCreate,
+            associatedUserNames
         })
 
 
-        socket.on('requestTransport', async({type}, ackCb) => {
+        socket.on('requestTransport', async({type, audioPid}, ackCb) => {
             let clientTransportParams;
 
             if(type === "producer"){
                 //run addClient, which is part of our client class
             clientTransportParams = await client.addTransport(type)
-            } else if(type === "consumer") {}
+            } else if(type === "consumer") {
+                const producingClient = client.room.clients.find(c=> c?.producer?.audio?.id === audioPid)
+                const videoPid = producingClient?.producer?.video?.id
+
+                clientTransportParams = await client.addTransport(type, audioPid, videoPid)
+
+            }
             
             ackCb(clientTransportParams)
         })
