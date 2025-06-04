@@ -11,6 +11,7 @@ const createWorkers = require('./utilities/createWorkers')
 const Client = require('./Classes/Client')
 const Room = require('./Classes/Room')
 const getWorker = require('./utilities/getWorker')
+const updateActiveSpeakers = require('./utilities/updateActiveSpeakers')
 
 
 const io = socketio(httpServer,{
@@ -101,11 +102,12 @@ io.on('connect', socket => {
                     ackCb("error")
                 }
             } else if (type === "consumer"){
-                try {
-                const downstreamTransport = client.downstreamTransports.find(t => {
+                try 
+        {
+        const downstreamTransport = client.downstreamTransports.find(t => {
                     return t.associatedAudioPid === audioPid
                 })                
-                    await downstreamTransport.transport.connect({dtlsParameters})
+                downstreamTransport.transport.connect({dtlsParameters})
                     ackCb("success")
                 } catch (error) {
                     console.log(error)
@@ -119,13 +121,37 @@ io.on('connect', socket => {
                     const newProducer = await client.upstreamTransport.produce({kind, rtpParameters})
 
                     client.addProducer(kind, newProducer)
+                    if (kind === "audio"){
+                        client.room.activeSpeakerList.push(newProducer.id)
+                    }
                     ackCb(newProducer.id)
                     
                 } catch (error) {
                     console.log(error)
-                    ackCb("error")
+                    ackCb(error)
                 }
-    })
+        const newTransportsByPeer = updateActiveSpeakers(client.room, io)
+
+        for(const [socketId, audioPidsToCreate] of Object.entries(newTransportsByPeer)){
+            const videoPidsToCreate = audioPidsToCreate.map(aPid => {
+                const producerClient = client.room.clients.find(c => c?.producer?.audio?.id === aPid)
+                return producerClient?.producer?.video?.id
+        })
+
+        const associatedUserNames = audioPidsToCreate.map(aPid => {
+                const producerClient = client.room.clients.find(c => c?.producer?.audio?.id === aPid)
+                return producerClient?.userName
+        })
+        io.to(socketId).emit('newProducersToConsume', {
+            routerRtpCapablities: client.room.router.rtpCapabilities,
+            newRoom,
+            audioPidsToCreate,
+            videoPidsToCreate,
+            associatedUserNames,
+            activeSpeakerList: client.room.activeSpeakerList.slice(0,5)
+        })
+        
+    
 
     socket.on('audioChange', typeOfChange => {
         if(typeOfChange === "mute"){
