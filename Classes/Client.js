@@ -10,6 +10,7 @@ class Client {
         this.producer = {}
 
         this.downstreamTransports = []
+             
         this.consumers = []
 
         this.room = null
@@ -46,16 +47,16 @@ class Client {
         //set the new transport to the client's upstream transport
         this.upstreamTransport = transport
 
-        setInterval(async () => {
-        const stats = await this.upstreamTransport.getStats()
-        for (const report of stats.values()){
-            console.log(report.type)
-            if(report.type === "webrtc-transport"){
-                console.log(report.bytesReceived, `-`, report.rtpBytesReceived)
-                // console.log(report)
-            }
-        }
-    }, 1000)
+    //     setInterval(async () => {
+    //     const stats = await this.upstreamTransport.getStats()
+    //     for (const report of stats.values()){
+    //         console.log(report.type)
+    //         if(report.type === "webrtc-transport"){
+    //             console.log(report.bytesReceived, `-`, report.rtpBytesReceived)
+    //             // console.log(report)
+    //         }
+    //     }
+    // }, 1000)
 
     }else if (type === "consumer"){
         this.downstreamTransports.push({
@@ -76,6 +77,9 @@ class Client {
                 producerId: newProducer.id,
             })
         }
+    }
+    addConsumer(kind, newConsumer, downstreamTransport){
+        downstreamTransport[kind] = newConsumer
     }
 }
 
