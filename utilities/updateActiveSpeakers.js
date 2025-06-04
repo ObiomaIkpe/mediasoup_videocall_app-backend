@@ -42,7 +42,7 @@ const updateActiveSpeakers = (room, io) => {
             newTransportsByPeer[client.socket.id] = newSpeakersToThisClient
         }
     })
-    io.to(room.roomName).emit('updateActiveSpeakers')
+    io.to(room.roomName).emit('updateActiveSpeakers', activeSpeakers)
     return newTransportsByPeer
 }
 

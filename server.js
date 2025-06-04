@@ -150,10 +150,11 @@ io.on('connect', socket => {
             associatedUserNames,
             activeSpeakerList: client.room.activeSpeakerList.slice(0,5)
         })
-        
+        }
+    })
+              
     
-
-    socket.on('audioChange', typeOfChange => {
+socket.on('audioChange', typeOfChange => {
         if(typeOfChange === "mute"){
             client?.producer?.audio?.pause()
         } else {
