@@ -45,7 +45,7 @@ jobs:
           ssh -i ~/.ssh/id_ed25519 ubuntu@52.27.98.238 << 'EOF'
             set -e
 
-            REPO_DIR="/root/call-feature"
+            REPO_DIR="/home/ubuntu/call-feature"
             GIT_REPO="git@github.com:${{ github.repository }}.git"
 
             # Clone if not already cloned
