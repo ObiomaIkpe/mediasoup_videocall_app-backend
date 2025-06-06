@@ -12,8 +12,8 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Stage 2: Run the backend with Node
-FROM node:18-alpine
+# Stage 2: Run the backend with Node (use Debian base for compatibility)
+FROM node:18
 
 WORKDIR /app
 
