@@ -16,7 +16,6 @@ services:
         parallelism: 2
         failure_action: rollback
         order: start-first
-
 networks:
   swarm-global-network:
     external: true
