@@ -4,8 +4,6 @@ services:
   video-call-backend:
     image: samuelosondu001/video-call-backend:latest
     restart: unless-stopped
-    env_file:
-      - .env
     networks:
       - swarm-global-network
     deploy:
