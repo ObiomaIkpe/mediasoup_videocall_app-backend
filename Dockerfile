@@ -1,4 +1,4 @@
-# Stage 1: Build the application
+# Stage 1: Build the application (install dependencies only)
 FROM node:18 as build
 
 WORKDIR /app
@@ -12,19 +12,14 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Build the application
-RUN npm run build
+# Stage 2: Run the backend with Node
+FROM node:18-alpine
 
-# Stage 2: Serve the application with Nginx
-FROM nginx:alpine
+WORKDIR /app
 
-# Copy the build output from the previous stage to the Nginx HTML directory
-COPY --from=build /app/dist /usr/share/nginx/html
+# Copy installed dependencies and code from build stage
+COPY --from=build /app /app
 
-# Copy custom Nginx configuration if needed
-#COPY ./nginx.conf /etc/nginx/templates/default.conf.template
-COPY ./nginx.conf /etc/nginx/nginx.conf
+EXPOSE 3000
 
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["node", "server.js"]
