@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  video-call-backend:
+    image: samuelosondu001/video-call-backend:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - swarm-global-network
+    deploy:
+      endpoint_mode: dnsrr
+      mode: replicated
+      replicas: 1
+      rollback_config:
+        parallelism: 2
+      update_config:
+        parallelism: 2
+        failure_action: rollback
+        order: start-first
+
+networks:
+  swarm-global-network:
+    external: true
