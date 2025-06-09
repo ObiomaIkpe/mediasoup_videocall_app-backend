@@ -16,7 +16,11 @@ const updateActiveSpeakers = require('./utilities/updateActiveSpeakers')
 
 
 const io = socketio(httpServer,{
-    cors: ['https://mediasoup-videocall-app-frontend.onrender.com/'],
+    cors:{
+         origin: ['https://mediasoup-videocall-app-frontend.onrender.com'],
+         methods: ["GET", "POST"],
+         credentials: true
+    }
 })
 
 let workers = null
