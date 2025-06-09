@@ -19,7 +19,8 @@ const publicIP = async ()  => {
 publicIP();
 
 const config = {
-    port: process.env.PORT || 3000,
+    // port: process.env.PORT || 3000,
+    port: 3031,
     workerSettings: {
         //rtcMinPort and max are just arbitray ports for our traffic
         //useful for firewall or networking rules
@@ -64,10 +65,11 @@ const config = {
     webRtcTransport: {
       listenIps: [
         {
-          //ip: '127.0.0.1'lcoalhost
-          ip: '0.0.0.0',
-          announcedIp: publicIp // replace by public IP address
+          ip: '127.0.0.1', //localhost
+          // ip: '0.0.0.0',
+          // announcedIp: publicIp // replace by public IP address
           // announcedIp: '76.97.119.246',
+          announcedIp: null
         }
       ],
       //For a typical video stream with HD quality, you might set maxIncomingBitrate 
