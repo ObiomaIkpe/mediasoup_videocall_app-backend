@@ -35,7 +35,7 @@ const initMediasoup = async () => {
 initMediasoup()
 
 app.get('/', (req, res) => {
-    res.status(200).send('server is up')
+    res.status(200).send('server is up!!')
 })
 
 io.on('connect', socket => {
