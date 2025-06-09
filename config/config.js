@@ -1,4 +1,23 @@
 
+const getPublicIp = require('../utilities/findMyIP');
+
+let publicIp = null;
+
+const publicIP = async ()  => {
+  
+  try {
+    publicIp = await getPublicIp();
+    if (!publicIp || !/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(publicIp)) {
+      throw new Error('Invalid IP address received from external service.');
+    }
+    console.log(`Public IP address: ${publicIp}`);
+  } catch (error) {
+    console.log("error")
+  }
+}
+
+publicIP();
+
 const config = {
     port: process.env.PORT || 3000,
     workerSettings: {
@@ -47,7 +66,7 @@ const config = {
         {
           //ip: '127.0.0.1'lcoalhost
           ip: '0.0.0.0',
-          announcedIp: '52.27.98.238' // replace by public IP address
+          announcedIp: publicIp // replace by public IP address
           // announcedIp: '76.97.119.246',
         }
       ],
