@@ -104,6 +104,7 @@ io.on('connect', socket => {
             } else if (type === "consumer"){
                 try 
         {
+            //find the right transport for this consumer
         const downstreamTransport = client.downstreamTransports.find(t => {
                     return t.associatedAudioPid === audioPid
                 })                
@@ -130,9 +131,11 @@ io.on('connect', socket => {
                     console.log(error)
                     ackCb(error)
                 }
+        //run update active speakers
         const newTransportsByPeer = updateActiveSpeakers(client.room, io)
 
         for(const [socketId, audioPidsToCreate] of Object.entries(newTransportsByPeer)){
+            //we have the audio pids that this socket needs to create
             const videoPidsToCreate = audioPidsToCreate.map(aPid => {
                 const producerClient = client.room.clients.find(c => c?.producer?.audio?.id === aPid)
                 return producerClient?.producer?.video?.id
@@ -165,7 +168,6 @@ socket.on('audioChange', typeOfChange => {
     socket.on('consumeMedia', async ({rtpCapabilities, pid, kind}, ackCb) => {
         //will run twice for every peer to be consumed. one for video, and the second one for audio
         console.log("kind:", kind, "pid:", pid)
-
         try {
         if(!client.room.router.canConsume({producerId:pid, rtpCapabilities}))
             {

@@ -7,8 +7,11 @@ const updateActiveSpeakers = (room, io) => {
     const newTransportsByPeer = {}
 
     room.clients.forEach(client => {
+        //loop through all clients to mute.
         mutedSpeakers.forEach(pid => {
+            //pid: the producer id we want to mute
             if(client?.producer?.audio?.id === pid){
+                // this client is the producer. Mute the producer
                 client?.producer?.audio.pause()
                 client?.producer?.video.pause()
                 return
@@ -16,11 +19,13 @@ const updateActiveSpeakers = (room, io) => {
             const downstreamToStop = client.downstreamTransports.find(t => {
                 t?.audio?.producerId === pid
             })
-            if(downstreamTransport){
+            if(downstreamToStop){
+                //found the audio, mute both audio and video
                 downstreamToStop.audio.pause()
                 downstreamToStop.video.pause()
             }
         })
+        // store all the PIDs this client is not yet consuming
         const newSpeakersToThisClient = []
         activeSpeakers.forEach(pid => {
             if(client?.producer?.audio?.id === pid){
@@ -35,6 +40,7 @@ const updateActiveSpeakers = (room, io) => {
                     downstreamToStart?.audio.resume()
                     downstreamToStart?.video.resume()
                 }else {
+                    //this client is not consuming, start the process
                     newSpeakersToThisClient.push(pid)
                 }
         })
