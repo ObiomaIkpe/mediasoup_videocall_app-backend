@@ -47,7 +47,7 @@ const config = {
         {
           //ip: '127.0.0.1'lcoalhost
           ip: '0.0.0.0',
-          announcedIp: 52.27.98.238 // replace by public IP address
+          announcedIp: '52.27.98.238' // replace by public IP address
           // announcedIp: '76.97.119.246',
         }
       ],
