@@ -1,5 +1,6 @@
 const http = require('http') 
 const express = require('express')
+require('dotenv').config()
 const app = express()
 const httpServer = http.createServer(app)
 
@@ -28,6 +29,10 @@ const initMediasoup = async () => {
 
 
 initMediasoup()
+
+app.get('/', (req, res) => {
+    res.status(200).send('server is up')
+})
 
 io.on('connect', socket => {
     let client;
