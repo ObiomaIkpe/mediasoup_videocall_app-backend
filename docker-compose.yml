@@ -1,21 +1,28 @@
 version: '3.8'
 
 services:
-  video-call-backend:
+  backend:
     image: samuelosondu001/video-call-backend:latest
     restart: unless-stopped
     networks:
       - swarm-global-network
     deploy:
-      endpoint_mode: dnsrr
-      mode: replicated
       replicas: 1
-      rollback_config:
-        parallelism: 2
-      update_config:
-        parallelism: 2
-        failure_action: rollback
-        order: start-first
+    expose:
+      - "3000"
+
+  nginx:
+    image: nginx:stable
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+    networks:
+      - swarm-global-network
+
 networks:
   swarm-global-network:
     external: true
