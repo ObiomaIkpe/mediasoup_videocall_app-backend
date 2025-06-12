@@ -258,7 +258,9 @@ socket.on('audioChange', typeOfChange => {
 })
 
 
-httpServer.listen(config.port)
+httpServer.listen(config.port, () => {
+    console.log(`server is running on port ${config.port}`)
+})
 
     
 
