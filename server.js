@@ -30,12 +30,9 @@ const allowedPatternsRegex = /^https?:\/\/(?:[^.]+\.)*clearcomms\.space$/;
 
 const corsOptions = {
     origin: function (origin, callback) {
-        const allowedExactOrigins = [
-            'https://mediasoup-videocall-app-frontend.onrender.com',
-            'http://localhost:5173'
-        ];
+        const allowedExactOrigins =allowedExactOriginsList;
 
-        const allowedPatterns = /\.clearcomms\.space$/;
+        const allowedPatterns = allowedPatternsRegex;
 
         if (!origin) return callback(null, true);
 
