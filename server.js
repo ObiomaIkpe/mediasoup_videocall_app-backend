@@ -19,7 +19,8 @@ const updateActiveSpeakers = require('./utilities/updateActiveSpeakers')
 // ================another cors method to try=================
 const allowedExactOriginsList = [
     'https://mediasoup-videocall-app-frontend.onrender.com',
-    'http://localhost:5173'
+    'http://localhost:5173',
+    'https://www.clearcomms.space/'
 ];
 
 // Corrected regex to match:
