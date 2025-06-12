@@ -6,6 +6,7 @@ const httpServer = http.createServer(app)
 
 const socketio = require('socket.io')
 const mediasoup = require('mediasoup')
+const cors = require('cors')
 
 const config = require('./config/config')
 const createWorkers = require('./utilities/createWorkers')
@@ -14,6 +15,18 @@ const Room = require('./Classes/Room')
 const getWorker = require('./utilities/getWorker')
 const updateActiveSpeakers = require('./utilities/updateActiveSpeakers')
 
+
+// ================another cors method to try=================
+const allowedExactOriginsList = [
+    'https://mediasoup-videocall-app-frontend.onrender.com',
+    'http://localhost:5173'
+];
+
+// Corrected regex to match:
+// - Starts with http:// or https://
+// - Allows for zero or more subdomains (e.g., '', 'www.', 'sub.www.')
+// - Ends with .clearcomms.space
+const allowedPatternsRegex = /^https?:\/\/(?:[^.]+\.)*clearcomms\.space$/;
 
 const corsOptions = {
     origin: function (origin, callback) {
@@ -36,28 +49,13 @@ const corsOptions = {
     credentials: true 
 }
 
+app.use(cors(corsOptions)); 
+
 const io = socketio(httpServer,{
-    cors:{
-         origin: function (origin, callback) {
-        const allowedExactOrigins = [
-            'https://mediasoup-videocall-app-frontend.onrender.com',
-            'http://localhost:5173'
-        ];
+    cors: corsOptions
+});
 
-        const allowedPatterns = /\.clearcomms\.space$/;
-
-        if (!origin) return callback(null, true);
-
-        if(allowedExactOrigins.includes(origin) || allowedPatterns.test(origin)){
-            callback(null, true);
-        } else {
-            callback(new Error('not allowed by cors'))
-        }
-    },
-    methods: ["GET", "POST"],
-    credentials: true
-}
-})
+// ================end of new cors method to try=================
 
 let workers = null
 
